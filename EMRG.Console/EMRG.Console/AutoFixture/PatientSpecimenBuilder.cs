@@ -1,15 +1,17 @@
-﻿using System.Collections.Generic;
-using System.Reflection;
-using Ploeh.AutoFixture;
+﻿using Ploeh.AutoFixture;
 using Ploeh.AutoFixture.Kernel;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace EMRG.Console.AutoFixture
 {
-    public class PatientDemographicsSpecimenBuilder : ISpecimenBuilder
+    class PatientSpecimenBuilder : ISpecimenBuilder
     {
         private readonly Dictionary<string, ISpecimenBuilder> _builders = new Dictionary<string, ISpecimenBuilder>();
+        private readonly ISpecimenBuilder _datetimeGenerator = new RandomDateTimeSequenceGenerator(DateTime.Today.AddYears(-10), DateTime.Today);
 
-        public PatientDemographicsSpecimenBuilder()
+        public PatientSpecimenBuilder()
         {
             _builders.Add("Age", new RandomNumericSequenceGenerator(18, 89));
             _builders.Add("Gender", new ConstrainedValueGenerator(new List<string> { "Female", "Male" }));
@@ -20,9 +22,16 @@ namespace EMRG.Console.AutoFixture
         public object Create(object request, ISpecimenContext context)
         {
             var info = request as PropertyInfo;
-            if (info != null && _builders.ContainsKey(info.Name))
+            if (info != null)
             {
-                return _builders[info.Name].Create(info.PropertyType, context);
+                if (_builders.ContainsKey(info.Name))
+                {
+                    return _builders[info.Name].Create(info.PropertyType, context);
+                }
+                else if (info.PropertyType == typeof(DateTime))
+                {
+                    return _datetimeGenerator.Create(info.PropertyType, context);
+                }
             }
 
             return new NoSpecimen(request);

@@ -47,8 +47,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AutoFixture\PatientDemographicsSpecimenBuilder.cs" />
+    <Compile Include="AutoFixture\PatientSpecimenBuilder.cs" />
     <Compile Include="AutoFixture\ConstrainedValueGenerator.cs" />
+    <Compile Include="AutoFixture\WeightGenerator.cs" />
+    <Compile Include="CSV\CsvWriter.cs" />
     <Compile Include="Enumerations\Allergy.cs" />
     <Compile Include="Enumerations\Specialty.cs" />
     <Compile Include="Enumerations\UtilizationActivity.cs" />

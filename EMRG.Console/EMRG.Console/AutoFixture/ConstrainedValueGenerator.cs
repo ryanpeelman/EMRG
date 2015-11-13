@@ -5,7 +5,7 @@ using Ploeh.AutoFixture.Kernel;
 
 namespace EMRG.Console.AutoFixture
 {
-    public class ConstrainedValueGenerator : ISpecimenBuilder
+    class ConstrainedValueGenerator : ISpecimenBuilder
     {
         private readonly Random _randomizer = new Random();
         private readonly IEnumerable<string> _values;
