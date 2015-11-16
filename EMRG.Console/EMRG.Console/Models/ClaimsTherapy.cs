@@ -2,7 +2,7 @@
 
 namespace EMRG.Console.Models
 {
-    class ClaimTherapy
+    class ClaimsTherapy
     {
         public string PatientId { get; set; }
         public int Age { get; set; }

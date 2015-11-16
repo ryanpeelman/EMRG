@@ -7,7 +7,7 @@ namespace EMRG.Console.AutoFixture
 {
     class ConstrainedValueGenerator : ISpecimenBuilder
     {
-        private readonly Random _randomizer = new Random();
+        private static readonly Random _randomizer = new Random((int)DateTime.Now.Ticks);
         private readonly IEnumerable<string> _values;
 
         public ConstrainedValueGenerator(IEnumerable<string> values)

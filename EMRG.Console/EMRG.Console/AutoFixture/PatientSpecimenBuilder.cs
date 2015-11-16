@@ -17,6 +17,9 @@ namespace EMRG.Console.AutoFixture
             _builders.Add("Gender", new ConstrainedValueGenerator(new List<string> { "Female", "Male" }));
             _builders.Add("Race", new ConstrainedValueGenerator(new List<string> { "American Indian and Alaska Native", "Asian", "Black or African American", "Native Hawaiian and Other Pacific Islander", "White" }));
             _builders.Add("Region", new ConstrainedValueGenerator(new List<string> { "North", "South", "East", "West", "Central" }));
+            _builders.Add("ICD9", new ICD9Generator());
+            _builders.Add("NDC", new NDCGenerator());
+            _builders.Add("CptHcpcs", new CPTGenerator());
         }
 
         public object Create(object request, ISpecimenContext context)

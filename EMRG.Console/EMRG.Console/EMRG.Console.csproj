@@ -47,6 +47,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AutoFixture\CPTGenerator.cs" />
+    <Compile Include="AutoFixture\ICD9Generator.cs" />
+    <Compile Include="AutoFixture\NDCGenerator.cs" />
     <Compile Include="AutoFixture\PatientSpecimenBuilder.cs" />
     <Compile Include="AutoFixture\ConstrainedValueGenerator.cs" />
     <Compile Include="AutoFixture\WeightGenerator.cs" />
@@ -55,7 +58,7 @@
     <Compile Include="Enumerations\Specialty.cs" />
     <Compile Include="Enumerations\UtilizationActivity.cs" />
     <Compile Include="Models\ClaimsUtilization.cs" />
-    <Compile Include="Models\ClaimTherapy.cs" />
+    <Compile Include="Models\ClaimsTherapy.cs" />
     <Compile Include="Models\PatientAllergy.cs" />
     <Compile Include="Models\PatientClinical.cs" />
     <Compile Include="Models\PatientDemographics.cs" />
