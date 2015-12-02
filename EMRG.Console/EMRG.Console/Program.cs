@@ -33,11 +33,11 @@ namespace EMRG.Console
             int maxNumberOfPatientAllergies = 5;
             int maxNumberOfPatientClinicals = 10;
             int maxNumberOfPatientDiagnoses = 5;
-            int maxNumberOfPatientLabs = 10;
+            int maxNumberOfPatientLabs = 20;
             int maxNumberOfPatientProcedures = 5;
-            int maxNumberOfPatientTherapies = 5;
+            int maxNumberOfPatientTherapies = 20;
             int maxNumberOfPatientUtilizations = 15;
-            int numberOfPatients = 5;
+            int numberOfPatients = 50;
             for (int i = 0; i < numberOfPatients; i++)
             {
                 var demographic = fixture.Create<PatientDemographics>();
@@ -63,6 +63,7 @@ namespace EMRG.Console
 
                 fixture.Customize<PatientLab>(pl => pl.With(x => x.PatientId, demographic.PatientId));
                 var labs = fixture.CreateMany<PatientLab>(Randomizer.Next(0, maxNumberOfPatientLabs + 1)).OrderBy(x => x.LabDate);
+                labs.ToList().ForEach(RedecoratePatientLab);
 
                 fixture.Customize<PatientTherapy>(pt => pt.With(x => x.PatientId, demographic.PatientId)
                                                           .Without(x => x.DDID)
@@ -128,6 +129,7 @@ namespace EMRG.Console
             writer.WriteToFile($"{FOLDERPATH}\\{timestamp}.unofficial.claimstherapies.csv", allClaimsTherapies);
             writer.WriteToFile($"{FOLDERPATH}\\{timestamp}.unofficial.claimsutilizations.csv", allClaimsUtilizations);
         }
+
         private static void RedecorateClaimsTherapy(ClaimsTherapy therapy)
         {
             if (therapy.StartDate > therapy.StopDate)
@@ -151,6 +153,25 @@ namespace EMRG.Console
             var AVERAGE_HEIGHT_IN_METERS = 1.75;
             clinical.Weight = WeightGenerator.GetWeight(clinical.Weight);
             clinical.BMI = Math.Round(clinical.Weight/Math.Pow(AVERAGE_HEIGHT_IN_METERS, 2), 2);
+        }
+
+        private static void RedecoratePatientLab(PatientLab lab)
+        {
+            var preferredValues = new Dictionary<string, Func<string>>()
+            {
+                ["A1C[NORMAL]"] = () => Randomizer.Next(4, 9).ToString(),
+                ["A1C[ABNORMAL]"] = () => Randomizer.Next(8, 14).ToString()
+            };
+
+            var percentageOfPreferredValues = 40;
+            var shouldUsePreferredValue = Randomizer.Next(0, 101) <= percentageOfPreferredValues;
+            if (shouldUsePreferredValue)
+            {
+                var index = Randomizer.Next(0, preferredValues.Count);
+                var pair = preferredValues.ElementAt(index);
+                lab.LabName = pair.Key.Replace("[NORMAL]", string.Empty).Replace("[ABNORMAL]", string.Empty);
+                lab.Value = pair.Value.Invoke();
+            }
         }
 
         private static void RedecoratePatientTherapy(PatientTherapy therapy)
