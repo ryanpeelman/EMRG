@@ -10,11 +10,10 @@ namespace EMRG.Console
 {
     class Program
     {
+        private static readonly Random Randomizer = new Random((int)DateTime.Now.Ticks);
+
         static void Main(string[] args)
         {
-            var AVERAGE_HEIGHT_IN_METERS = 1.75;
-            var randomizer = new Random((int)DateTime.Now.Ticks);
-
             var allClaimsTherapies = new List<ClaimsTherapy>();
             var allClaimsUtilizations = new List<ClaimsUtilization>();
             var allPatientAllergies = new List<PatientAllergy>();
@@ -52,53 +51,35 @@ namespace EMRG.Console
                                                            .With(x => x.Smoker, smoker)
                                                            .With(x => x.Weight, WeightGenerator.GetWeight())
                                                            .Without(x => x.BMI));
-                var clinicals = fixture.CreateMany<PatientClinical>(randomizer.Next(0, maxNumberOfPatientClinicals + 1)).OrderBy(x => x.ObservationDate);
-                clinicals.ToList().ForEach(clinical => 
-                {
-                    clinical.Weight = WeightGenerator.GetWeight(clinical.Weight);
-                    clinical.BMI = Math.Round(clinical.Weight / Math.Pow(AVERAGE_HEIGHT_IN_METERS, 2), 2);
-                });
+                var clinicals = fixture.CreateMany<PatientClinical>(Randomizer.Next(0, maxNumberOfPatientClinicals + 1)).OrderBy(x => x.ObservationDate);
+                clinicals.ToList().ForEach(RedecoratePatientClinical);
 
                 fixture.Customize<PatientUtilization>(pu => pu.With(x => x.PatientId, demographic.PatientId));
-                var utilizations = fixture.CreateMany<PatientUtilization>(randomizer.Next(0, maxNumberOfPatientUtilizations + 1)).OrderBy(x => x.ActivityDate);
+                var utilizations = fixture.CreateMany<PatientUtilization>(Randomizer.Next(0, maxNumberOfPatientUtilizations + 1)).OrderBy(x => x.ActivityDate);
 
                 fixture.Customize<PatientDiagnosis>(pd => pd.With(x => x.PatientId, demographic.PatientId)
                                                             .Without(x => x.ICD10));
-                var diagnoses = fixture.CreateMany<PatientDiagnosis>(randomizer.Next(0, maxNumberOfPatientDiagnoses + 1)).OrderBy(x => x.DiagnosisDate);
+                var diagnoses = fixture.CreateMany<PatientDiagnosis>(Randomizer.Next(0, maxNumberOfPatientDiagnoses + 1)).OrderBy(x => x.DiagnosisDate);
 
                 fixture.Customize<PatientLab>(pl => pl.With(x => x.PatientId, demographic.PatientId));
-                var labs = fixture.CreateMany<PatientLab>(randomizer.Next(0, maxNumberOfPatientLabs + 1)).OrderBy(x => x.LabDate);
+                var labs = fixture.CreateMany<PatientLab>(Randomizer.Next(0, maxNumberOfPatientLabs + 1)).OrderBy(x => x.LabDate);
 
                 fixture.Customize<PatientTherapy>(pt => pt.With(x => x.PatientId, demographic.PatientId)
                                                           .Without(x => x.DDID)
                                                           .Without(x => x.RXNorm));
-                var therapies = fixture.CreateMany<PatientTherapy>(randomizer.Next(0, maxNumberOfPatientTherapies + 1));
-                therapies.ToList().ForEach(therapy =>
-                {
-                    if (therapy.StartDate > therapy.StopDate)
-                    {
-                        var holder = therapy.StartDate;
-                        therapy.StartDate = therapy.StopDate;
-                        therapy.StopDate = holder;
-                    }
-                });
+                var therapies = fixture.CreateMany<PatientTherapy>(Randomizer.Next(0, maxNumberOfPatientTherapies + 1));
+                therapies.ToList().ForEach(RedecoratePatientTherapy);
                 therapies = therapies.OrderBy(x => x.StartDate);
 
 
                 fixture.Customize<PatientAllergy>(pa => pa.With(x => x.PatientId, demographic.PatientId)
                                                           .Without(x => x.DDID)
                                                           .Without(x => x.RXNorm));
-                var allergies = fixture.CreateMany<PatientAllergy>(randomizer.Next(0, maxNumberOfPatientAllergies + 1)).OrderBy(x => x.DiagnosisDate);
-                allergies.ToList().ForEach(allergy =>
-                {
-                    if (allergy.AllergyType != Enumerations.Allergy.Drug)
-                    {
-                        allergy.NDC = null;
-                    }
-                });
+                var allergies = fixture.CreateMany<PatientAllergy>(Randomizer.Next(0, maxNumberOfPatientAllergies + 1)).OrderBy(x => x.DiagnosisDate);
+                allergies.ToList().ForEach(RedecoratePatientAllergy);
 
                 fixture.Customize<PatientProcedure>(pp => pp.With(x => x.PatientId, demographic.PatientId));
-                var procedures = fixture.CreateMany<PatientProcedure>(randomizer.Next(0, maxNumberOfPatientProcedures + 1)).OrderBy(x => x.ProcedureDate);
+                var procedures = fixture.CreateMany<PatientProcedure>(Randomizer.Next(0, maxNumberOfPatientProcedures + 1)).OrderBy(x => x.ProcedureDate);
 
                 fixture.Customize<ClaimsUtilization>(cu => cu.With(x => x.PatientId, demographic.PatientId)
                                                              .With(x => x.Age, demographic.Age)
@@ -107,7 +88,7 @@ namespace EMRG.Console
                                                              .With(x => x.AlcoholAbuse, alcoholAbuse)
                                                              .With(x => x.DrugAbuse, drugAbuse)
                                                              .Without(x => x.ICD10));
-                var claimsUtilizations = fixture.CreateMany<ClaimsUtilization>(randomizer.Next(0, maxNumberOfClaimsUtilizations + 1)).OrderBy(x => x.ActivityDate);
+                var claimsUtilizations = fixture.CreateMany<ClaimsUtilization>(Randomizer.Next(0, maxNumberOfClaimsUtilizations + 1)).OrderBy(x => x.ActivityDate);
 
                 fixture.Customize<ClaimsTherapy>(ct => ct.With(x => x.PatientId, demographic.PatientId)
                                                          .With(x => x.Age, demographic.Age)
@@ -117,16 +98,8 @@ namespace EMRG.Console
                                                          .With(x => x.DrugAbuse, drugAbuse)
                                                          .Without(x => x.DDID)
                                                          .Without(x => x.RXNorm));
-                var claimsTherapies = fixture.CreateMany<ClaimsTherapy>(randomizer.Next(0, maxNumberOfClaimsTherapies + 1)).OrderBy(x => x.StartDate);
-                claimsTherapies.ToList().ForEach(therapy =>
-                {
-                    if (therapy.StartDate > therapy.StopDate)
-                    {
-                        var holder = therapy.StartDate;
-                        therapy.StartDate = therapy.StopDate;
-                        therapy.StopDate = holder;
-                    }
-                });
+                var claimsTherapies = fixture.CreateMany<ClaimsTherapy>(Randomizer.Next(0, maxNumberOfClaimsTherapies + 1)).OrderBy(x => x.StartDate);
+                claimsTherapies.ToList().ForEach(RedecorateClaimsTherapy);
                 claimsTherapies = claimsTherapies.OrderBy(x => x.StartDate);
 
                 allClaimsTherapies.AddRange(claimsTherapies);
@@ -142,17 +115,77 @@ namespace EMRG.Console
             }
 
             string FOLDERPATH = "c:\\temp";
+            string timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
             var writer = new CsvWriter();
-            writer.WriteToFile($"{FOLDERPATH}\\demos.csv", allPatientDemographics);
-            writer.WriteToFile($"{FOLDERPATH}\\clinicals.csv", allPatientClinicals);
-            writer.WriteToFile($"{FOLDERPATH}\\utilizations.csv", allPatientUtilizations);
-            writer.WriteToFile($"{FOLDERPATH}\\diagnoses.csv", allPatientDiagnoses);
-            writer.WriteToFile($"{FOLDERPATH}\\labs.csv", allPatientLabs);
-            writer.WriteToFile($"{FOLDERPATH}\\therapies.csv", allPatientTherapies);
-            writer.WriteToFile($"{FOLDERPATH}\\allergies.csv", allPatientAllergies);
-            writer.WriteToFile($"{FOLDERPATH}\\procedures.csv", allPatientProcedures);
-            writer.WriteToFile($"{FOLDERPATH}\\claimstherapies.csv", allClaimsTherapies);
-            writer.WriteToFile($"{FOLDERPATH}\\claimsutilizations.csv", allClaimsUtilizations);
+            writer.WriteToFile($"{FOLDERPATH}\\{timestamp}.unofficial.patientdemographics.csv", allPatientDemographics);
+            writer.WriteToFile($"{FOLDERPATH}\\{timestamp}.unofficial.patientclinicals.csv", allPatientClinicals);
+            writer.WriteToFile($"{FOLDERPATH}\\{timestamp}.unofficial.patientutilizations.csv", allPatientUtilizations);
+            writer.WriteToFile($"{FOLDERPATH}\\{timestamp}.unofficial.patientdiagnoses.csv", allPatientDiagnoses);
+            writer.WriteToFile($"{FOLDERPATH}\\{timestamp}.unofficial.patientlabs.csv", allPatientLabs);
+            writer.WriteToFile($"{FOLDERPATH}\\{timestamp}.unofficial.patienttherapies.csv", allPatientTherapies);
+            writer.WriteToFile($"{FOLDERPATH}\\{timestamp}.unofficial.patientallergies.csv", allPatientAllergies);
+            writer.WriteToFile($"{FOLDERPATH}\\{timestamp}.unofficial.patientprocedures.csv", allPatientProcedures);
+            writer.WriteToFile($"{FOLDERPATH}\\{timestamp}.unofficial.claimstherapies.csv", allClaimsTherapies);
+            writer.WriteToFile($"{FOLDERPATH}\\{timestamp}.unofficial.claimsutilizations.csv", allClaimsUtilizations);
+        }
+        private static void RedecorateClaimsTherapy(ClaimsTherapy therapy)
+        {
+            if (therapy.StartDate > therapy.StopDate)
+            {
+                var holder = therapy.StartDate;
+                therapy.StartDate = therapy.StopDate;
+                therapy.StopDate = holder;
+            }
+        }
+
+        private static void RedecoratePatientAllergy(PatientAllergy allergy)
+        {
+            if (allergy.AllergyType != Enumerations.Allergy.Drug)
+            {
+                allergy.NDC = null;
+            }
+        }
+
+        private static void RedecoratePatientClinical(PatientClinical clinical)
+        {
+            var AVERAGE_HEIGHT_IN_METERS = 1.75;
+            clinical.Weight = WeightGenerator.GetWeight(clinical.Weight);
+            clinical.BMI = Math.Round(clinical.Weight/Math.Pow(AVERAGE_HEIGHT_IN_METERS, 2), 2);
+        }
+
+        private static void RedecoratePatientTherapy(PatientTherapy therapy)
+        {
+            if (therapy.StartDate > therapy.StopDate)
+            {
+                var holder = therapy.StartDate;
+                therapy.StartDate = therapy.StopDate;
+                therapy.StopDate = holder;
+            }
+
+            var preferredValues = new Dictionary<string, string>()
+            {
+                ["21695-198"] = "ALBUTEROL",
+                ["0310-0800"] = "ACLIDINIUM BROMIDE",
+                ["69097-173"] = "IPRATROPIUM-ALBUTEROL",
+                ["63402-911"] = "ARFORMOTEROL TARTRATE",
+                ["59310-202"] = "BECLOMETHASONE DIPROPIONATE",
+                ["0186-0702"] = "BUDESONIDE-FORMOTEROL FUMARATE",
+                ["10122-901"] = "ZILEUTON",
+                ["0143-1020"] = "AMINOPHYLLINE",
+                ["0037-0678"] = "CROMOLYN SODIUM",
+                ["0023-8842"] = "NEDOCROMIL SODIUM",
+                ["50242-040"] = "OMALIZUMAB",
+                ["69299-202"] = "BETAMETHASONE"
+            };
+            var percentageOfPreferredValues = 80;
+            var shouldUsePreferredValue = Randomizer.Next(0, 101) <= percentageOfPreferredValues;
+            if (shouldUsePreferredValue)
+            {
+                var index = Randomizer.Next(0, preferredValues.Count);
+                var pair = preferredValues.ElementAt(index);
+                therapy.NDC = pair.Key;
+                therapy.DrugName = pair.Value;
+            }
         }
     }
 }
