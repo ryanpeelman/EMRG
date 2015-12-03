@@ -11,9 +11,12 @@ namespace EMRG.Console
     class Program
     {
         private static readonly Random Randomizer = new Random((int)DateTime.Now.Ticks);
+        private static List<ICD9Entry> _icd9Entries; 
 
         static void Main(string[] args)
         {
+            _icd9Entries = ICD9Repository.Instance.GetEntries().ToList();
+
             var allClaimsTherapies = new List<ClaimsTherapy>();
             var allClaimsUtilizations = new List<ClaimsUtilization>();
             var allPatientAllergies = new List<PatientAllergy>();
@@ -58,8 +61,11 @@ namespace EMRG.Console
                 var utilizations = fixture.CreateMany<PatientUtilization>(Randomizer.Next(0, maxNumberOfPatientUtilizations + 1)).OrderBy(x => x.ActivityDate);
 
                 fixture.Customize<PatientDiagnosis>(pd => pd.With(x => x.PatientId, demographic.PatientId)
+                                                            .Without(x => x.DiagnosisDescription)
+                                                            .Without(x => x.ICD9)
                                                             .Without(x => x.ICD10));
                 var diagnoses = fixture.CreateMany<PatientDiagnosis>(Randomizer.Next(0, maxNumberOfPatientDiagnoses + 1)).OrderBy(x => x.DiagnosisDate);
+                diagnoses.ToList().ForEach(RedecoratePatientDiagnosis);
 
                 fixture.Customize<PatientLab>(pl => pl.With(x => x.PatientId, demographic.PatientId));
                 var labs = fixture.CreateMany<PatientLab>(Randomizer.Next(0, maxNumberOfPatientLabs + 1)).OrderBy(x => x.LabDate);
@@ -150,6 +156,14 @@ namespace EMRG.Console
             var AVERAGE_HEIGHT_IN_METERS = 1.75;
             clinical.Weight = WeightGenerator.GetWeight(clinical.Weight);
             clinical.BMI = Math.Round(clinical.Weight/Math.Pow(AVERAGE_HEIGHT_IN_METERS, 2), 2);
+        }
+
+        private static void RedecoratePatientDiagnosis(PatientDiagnosis diagnosis)
+        {
+            var index = Randomizer.Next(0, _icd9Entries.Count);
+            var entry = _icd9Entries.ElementAt(index);
+            diagnosis.ICD9 = entry.ICD9Code;
+            diagnosis.DiagnosisDescription = entry.DisplayName;
         }
 
         private static void RedecoratePatientLab(PatientLab lab)

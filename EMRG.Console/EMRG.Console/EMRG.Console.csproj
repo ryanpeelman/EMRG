@@ -48,7 +48,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AutoFixture\CPTGenerator.cs" />
-    <Compile Include="AutoFixture\ICD9Generator.cs" />
+    <Compile Include="AutoFixture\ICD9Entry.cs" />
+    <Compile Include="AutoFixture\ICD9Repository.cs" />
     <Compile Include="AutoFixture\NDCGenerator.cs" />
     <Compile Include="AutoFixture\PatientSpecimenBuilder.cs" />
     <Compile Include="AutoFixture\ConstrainedValueGenerator.cs" />
@@ -72,6 +73,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="ICD9.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
