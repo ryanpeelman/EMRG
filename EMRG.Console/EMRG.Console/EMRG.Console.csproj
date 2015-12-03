@@ -47,7 +47,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AutoFixture\CPTGenerator.cs" />
     <Compile Include="Builders\ClaimsTherapyBuilder.cs" />
     <Compile Include="Builders\PatientClinicalBuilder.cs" />
     <Compile Include="Builders\PatientDiagnosisBuilder.cs" />
@@ -83,7 +82,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="ICD9.csv">
+    <None Include="Data\ICD9.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />

@@ -15,7 +15,7 @@ namespace EMRG.Console.Helpers
         {
             var commaDelimitedExpression = ",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)";
             var modelProperties = typeof(ICD9Entry).GetProperties(BindingFlags.Public | BindingFlags.Instance);
-            var lines = File.ReadAllLines("ICD9.csv");
+            var lines = File.ReadAllLines("Data\\ICD9.csv");
             var header = lines.First().Split(',');
             return lines.Skip(1).Select(x => Regex.Split(x, commaDelimitedExpression)).Select(x =>
             {
