@@ -32,7 +32,7 @@ namespace EMRG.Console
             int maxNumberOfClaimsUtilizations = 10;
             int maxNumberOfPatientAllergies = 5;
             int maxNumberOfPatientClinicals = 10;
-            int maxNumberOfPatientDiagnoses = 5;
+            int maxNumberOfPatientDiagnoses = 10;
             int maxNumberOfPatientLabs = 20;
             int maxNumberOfPatientProcedures = 5;
             int maxNumberOfPatientTherapies = 20;
@@ -67,7 +67,8 @@ namespace EMRG.Console
 
                 fixture.Customize<PatientTherapy>(pt => pt.With(x => x.PatientId, demographic.PatientId)
                                                           .Without(x => x.DDID)
-                                                          .Without(x => x.RXNorm));
+                                                          .Without(x => x.RXNorm)
+                                                          .Without(x => x.StopDate));
                 var therapies = fixture.CreateMany<PatientTherapy>(Randomizer.Next(0, maxNumberOfPatientTherapies + 1));
                 therapies.ToList().ForEach(RedecoratePatientTherapy);
                 therapies = therapies.OrderBy(x => x.StartDate);
@@ -132,12 +133,8 @@ namespace EMRG.Console
 
         private static void RedecorateClaimsTherapy(ClaimsTherapy therapy)
         {
-            if (therapy.StartDate > therapy.StopDate)
-            {
-                var holder = therapy.StartDate;
-                therapy.StartDate = therapy.StopDate;
-                therapy.StopDate = holder;
-            }
+            var daysOnTherapy = Randomizer.Next(1, 365);
+            therapy.StopDate = new DateTime(Math.Min(therapy.StartDate.AddDays(daysOnTherapy).Ticks, DateTime.Now.Ticks));
         }
 
         private static void RedecoratePatientAllergy(PatientAllergy allergy)
@@ -176,12 +173,8 @@ namespace EMRG.Console
 
         private static void RedecoratePatientTherapy(PatientTherapy therapy)
         {
-            if (therapy.StartDate > therapy.StopDate)
-            {
-                var holder = therapy.StartDate;
-                therapy.StartDate = therapy.StopDate;
-                therapy.StopDate = holder;
-            }
+            var daysOnTherapy = Randomizer.Next(1, 365);
+            therapy.StopDate = new DateTime(Math.Min(therapy.StartDate.AddDays(daysOnTherapy).Ticks, DateTime.Now.Ticks));
 
             var preferredValues = new Dictionary<string, string>()
             {
