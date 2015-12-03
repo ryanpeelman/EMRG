@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EMRG.Console.AutoFixture
+namespace EMRG.Console.Helpers
 {
     class WeightGenerator
     {

@@ -6,6 +6,12 @@ namespace EMRG.Console.Helpers
 {
     public static class RandomExtensions
     {
+        public static KeyValuePair<T, U> NextDictionaryPair<T, U>(this Random random, Dictionary<T, U> elements)
+        {
+            var index = random.Next(0, elements.Count);
+            return elements.ElementAt(index);
+        }
+
         public static T NextListElement<T>(this Random random, List<T> elements)
         {
             var index = random.Next(0, elements.Count);

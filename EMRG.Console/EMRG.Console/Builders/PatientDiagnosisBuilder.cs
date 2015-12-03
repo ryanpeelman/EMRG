@@ -1,32 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using EMRG.Console.Helpers;
+﻿using EMRG.Console.Helpers;
 using EMRG.Console.Models;
 using Ploeh.AutoFixture;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace EMRG.Console.Builders
 {
-    internal class DiagnosisBuilder
+    internal class PatientDiagnosisBuilder
     {
-        public const int ChanceOfHavingExclusionCondition = 10;
-        public const int ChanceOfHavingInclusionCondition = 80;
-        public const int ChanceOfHavingFavoredCondition = 30;
+        public const int ChanceOfHavingExclusionDiagnosis = 10;
+        public const int ChanceOfHavingInclusionDiagnosis = 80;
+        public const int ChanceOfHavingFavoredDiagnosis = 30;
 
-        private static List<string> _exclusionConditionCodes;
-        private static List<string> _inclusionConditionCodes;
-        private static List<string> _favoredConditionCodes;
+        private static List<string> _exclusionDiagnosisCodes;
+        private static List<string> _inclusionDiagnosisCodes;
+        private static List<string> _favoredDiagnosisCodes;
         private static List<ICD9Entry> _icd9Entries;
 
-        public static DiagnosisBuilder Instance { get; } = new DiagnosisBuilder();
+        public static PatientDiagnosisBuilder Instance { get; } = new PatientDiagnosisBuilder();
 
-        private DiagnosisBuilder()
+        private PatientDiagnosisBuilder()
         {
             _icd9Entries = ICD9Repository.Instance.GetEntries().ToList();
 
-            _exclusionConditionCodes = new List<string> { "160", "161", "162", "163", "164", "165", "277.0", "491", "492", "496" };
-            _inclusionConditionCodes = new List<string> { "493" };
-            _favoredConditionCodes = new List<string> { "280", "281", "282", "283", "284", "285", "300.4", "301.12", "309.0", "309.1", "311", "327.23", "428", "401", "402", "403", "404", "405", "714" };
+            _exclusionDiagnosisCodes = new List<string> { "160", "161", "162", "163", "164", "165", "277.0", "491", "492", "496" };
+            _inclusionDiagnosisCodes = new List<string> { "493" };
+            _favoredDiagnosisCodes = new List<string> { "280", "281", "282", "283", "284", "285", "300.4", "301.12", "309.0", "309.1", "311", "327.23", "428", "401", "402", "403", "404", "405", "714" };
         }
 
         public IEnumerable<PatientDiagnosis> GetPatientDiagnoses(Fixture fixture, Random randomizer, PatientDemographics demographic, int maxNumberOfPatientDiagnoses)
@@ -39,15 +39,15 @@ namespace EMRG.Console.Builders
             var diagnoses = fixture.CreateMany<PatientDiagnosis>(randomizer.Next(0, maxNumberOfPatientDiagnoses + 1)).ToList();
             foreach (var diagnosis in diagnoses)
             {
-                var hasFavoredCondition = randomizer.NextPercent() <= ChanceOfHavingFavoredCondition;
-                var entry = hasFavoredCondition ? GetSubsetEntry(randomizer, _favoredConditionCodes) : randomizer.NextListElement(_icd9Entries);
+                var hasFavoredDiagnosis = randomizer.NextPercent() <= ChanceOfHavingFavoredDiagnosis;
+                var entry = hasFavoredDiagnosis ? GetSubsetEntry(randomizer, _favoredDiagnosisCodes) : randomizer.NextListElement(_icd9Entries);
                 DecoratePatientDiagnosisFromICD9Entry(diagnosis, entry);
             }
 
-            var hasInclusionCondition = randomizer.NextPercent() <= ChanceOfHavingInclusionCondition;
-            if (hasInclusionCondition)
+            var hasInclusionDiagnosis = randomizer.NextPercent() <= ChanceOfHavingInclusionDiagnosis;
+            if (hasInclusionDiagnosis)
             {
-                var entry = GetSubsetEntry(randomizer, _inclusionConditionCodes);
+                var entry = GetSubsetEntry(randomizer, _inclusionDiagnosisCodes);
                 if (entry != null)
                 {
                     var diagnosis = fixture.Create<PatientDiagnosis>();
@@ -56,10 +56,10 @@ namespace EMRG.Console.Builders
                 }
             }
 
-            var hasExclusionCondition = randomizer.NextPercent() <= ChanceOfHavingExclusionCondition;
-            if (hasExclusionCondition)
+            var hasExclusionDiagnosis = randomizer.NextPercent() <= ChanceOfHavingExclusionDiagnosis;
+            if (hasExclusionDiagnosis)
             {
-                var entry = GetSubsetEntry(randomizer, _exclusionConditionCodes);
+                var entry = GetSubsetEntry(randomizer, _exclusionDiagnosisCodes);
                 if (entry != null)
                 {
                     var diagnosis = fixture.Create<PatientDiagnosis>();
@@ -77,9 +77,9 @@ namespace EMRG.Console.Builders
             diagnosis.DiagnosisDescription = entry.DisplayName;
         }
 
-        private static ICD9Entry GetSubsetEntry(Random randomizer, List<string> conditionCodes)
+        private static ICD9Entry GetSubsetEntry(Random randomizer, List<string> codes)
         {
-            var code = randomizer.NextListElement(conditionCodes);
+            var code = randomizer.NextListElement(codes);
             var entries = _icd9Entries.Where(x => x.ICD9Code.StartsWith(code)).ToList();
             return randomizer.NextListElement(entries);
         }

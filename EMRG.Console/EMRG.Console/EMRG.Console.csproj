@@ -48,14 +48,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AutoFixture\CPTGenerator.cs" />
-    <Compile Include="Builders\DiagnosisBuilder.cs" />
+    <Compile Include="Builders\ClaimsTherapyBuilder.cs" />
+    <Compile Include="Builders\PatientClinicalBuilder.cs" />
+    <Compile Include="Builders\PatientDiagnosisBuilder.cs" />
+    <Compile Include="Builders\PatientLabBuilder.cs" />
+    <Compile Include="Builders\PatientUtilizationBuilder.cs" />
+    <Compile Include="Builders\ClaimsUtilizationBuilder.cs" />
     <Compile Include="Helpers\ICD9Entry.cs" />
     <Compile Include="Helpers\ICD9Repository.cs" />
     <Compile Include="AutoFixture\NDCGenerator.cs" />
     <Compile Include="AutoFixture\PatientSpecimenBuilder.cs" />
     <Compile Include="AutoFixture\ConstrainedValueGenerator.cs" />
     <Compile Include="Helpers\RandomExtensions.cs" />
-    <Compile Include="AutoFixture\WeightGenerator.cs" />
+    <Compile Include="Helpers\WeightGenerator.cs" />
     <Compile Include="CSV\CsvWriter.cs" />
     <Compile Include="Enumerations\Allergy.cs" />
     <Compile Include="Enumerations\Specialty.cs" />
@@ -70,6 +75,9 @@
     <Compile Include="Models\PatientProcedure.cs" />
     <Compile Include="Models\PatientTherapy.cs" />
     <Compile Include="Models\PatientUtilization.cs" />
+    <Compile Include="Builders\PatientAllergyBuilder.cs" />
+    <Compile Include="Builders\PatientProcedureBuilder.cs" />
+    <Compile Include="Builders\PatientTherapyBuilder.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
