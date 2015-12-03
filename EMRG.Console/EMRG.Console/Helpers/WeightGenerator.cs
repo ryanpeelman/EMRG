@@ -2,7 +2,7 @@
 
 namespace EMRG.Console.Helpers
 {
-    class WeightGenerator
+    internal class WeightGenerator
     {
         private const double MIN_WEIGHT = 45.0;
         private const double MAX_WEIGHT = 135.0;

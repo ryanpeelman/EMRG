@@ -55,7 +55,7 @@
     <Compile Include="Builders\ClaimsUtilizationBuilder.cs" />
     <Compile Include="Helpers\ICD9Entry.cs" />
     <Compile Include="Helpers\ICD9Repository.cs" />
-    <Compile Include="AutoFixture\NDCGenerator.cs" />
+    <Compile Include="Helpers\NDCGenerator.cs" />
     <Compile Include="AutoFixture\PatientSpecimenBuilder.cs" />
     <Compile Include="AutoFixture\ConstrainedValueGenerator.cs" />
     <Compile Include="Helpers\RandomExtensions.cs" />

@@ -54,6 +54,10 @@ namespace EMRG.Console
                     therapy.NDC = pair.Key;
                     therapy.DrugName = pair.Value;
                 }
+                else
+                {
+                    therapy.NDC = NDCGenerator.GetRandomNDC(randomizer);
+                }
             }
 
             return therapies.OrderBy(x => x.StartDate);

@@ -1,4 +1,5 @@
-﻿using EMRG.Console.Models;
+﻿using EMRG.Console.Helpers;
+using EMRG.Console.Models;
 using Ploeh.AutoFixture;
 using System;
 using System.Collections.Generic;
@@ -16,14 +17,15 @@ namespace EMRG.Console
         {
             fixture.Customize<PatientAllergy>(pa => pa.With(x => x.PatientId, demographic.PatientId)
                                                       .Without(x => x.DDID)
+                                                      .Without(x => x.NDC)
                                                       .Without(x => x.RXNorm));
 
             var allergies = fixture.CreateMany<PatientAllergy>(randomizer.Next(0, maxNumberOfPatientAllergies + 1));
             foreach(var allergy in allergies)
             {
-                if (allergy.AllergyType != Enumerations.Allergy.Drug)
+                if (allergy.AllergyType == Enumerations.Allergy.Drug)
                 {
-                    allergy.NDC = null;
+                    allergy.NDC = NDCGenerator.GetRandomNDC(randomizer);
                 }
             }
 
