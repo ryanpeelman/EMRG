@@ -154,18 +154,18 @@ namespace EMRG.Console
 
         private static void RedecoratePatientLab(PatientLab lab)
         {
-            var preferredValues = new Dictionary<string, Func<string>>()
+            var favoredValues = new Dictionary<string, Func<string>>()
             {
                 ["A1C[NORMAL]"] = () => Randomizer.Next(4, 9).ToString(),
                 ["A1C[ABNORMAL]"] = () => Randomizer.Next(8, 14).ToString()
             };
 
-            var percentageOfPreferredValues = 40;
-            var shouldUsePreferredValue = Randomizer.NextPercent() <= percentageOfPreferredValues;
+            var percentageOfFavoredValues = 40;
+            var shouldUsePreferredValue = Randomizer.NextPercent() <= percentageOfFavoredValues;
             if (shouldUsePreferredValue)
             {
-                var index = Randomizer.Next(0, preferredValues.Count);
-                var pair = preferredValues.ElementAt(index);
+                var index = Randomizer.Next(0, favoredValues.Count);
+                var pair = favoredValues.ElementAt(index);
                 lab.LabName = pair.Key.Replace("[NORMAL]", string.Empty).Replace("[ABNORMAL]", string.Empty);
                 lab.Value = pair.Value.Invoke();
             }
@@ -176,7 +176,7 @@ namespace EMRG.Console
             var daysOnTherapy = Randomizer.Next(1, 365);
             therapy.StopDate = new DateTime(Math.Min(therapy.StartDate.AddDays(daysOnTherapy).Ticks, DateTime.Now.Ticks));
 
-            var preferredValues = new Dictionary<string, string>()
+            var favoredValues = new Dictionary<string, string>()
             {
                 ["21695-198"] = "ALBUTEROL",
                 ["0310-0800"] = "ACLIDINIUM BROMIDE",
@@ -191,12 +191,13 @@ namespace EMRG.Console
                 ["50242-040"] = "OMALIZUMAB",
                 ["69299-202"] = "BETAMETHASONE"
             };
-            var percentageOfPreferredValues = 80;
-            var shouldUsePreferredValue = Randomizer.Next(0, 101) <= percentageOfPreferredValues;
+
+            var percentageOfFavoredValues = 80;
+            var shouldUsePreferredValue = Randomizer.Next(0, 101) <= percentageOfFavoredValues;
             if (shouldUsePreferredValue)
             {
-                var index = Randomizer.Next(0, preferredValues.Count);
-                var pair = preferredValues.ElementAt(index);
+                var index = Randomizer.Next(0, favoredValues.Count);
+                var pair = favoredValues.ElementAt(index);
                 therapy.NDC = pair.Key;
                 therapy.DrugName = pair.Value;
             }
