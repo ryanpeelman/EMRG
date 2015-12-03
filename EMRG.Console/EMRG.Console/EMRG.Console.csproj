@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="Builders\ClaimsTherapyBuilder.cs" />
     <Compile Include="Builders\PatientClinicalBuilder.cs" />
+    <Compile Include="Builders\PatientDemographicBuilder.cs" />
     <Compile Include="Builders\PatientDiagnosisBuilder.cs" />
     <Compile Include="Builders\PatientLabBuilder.cs" />
     <Compile Include="Builders\PatientUtilizationBuilder.cs" />
@@ -57,7 +58,6 @@
     <Compile Include="Helpers\ICD9Repository.cs" />
     <Compile Include="Helpers\NDCGenerator.cs" />
     <Compile Include="AutoFixture\PatientSpecimenBuilder.cs" />
-    <Compile Include="AutoFixture\ConstrainedValueGenerator.cs" />
     <Compile Include="Helpers\RandomExtensions.cs" />
     <Compile Include="Helpers\WeightGenerator.cs" />
     <Compile Include="CSV\CsvWriter.cs" />

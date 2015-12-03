@@ -44,7 +44,7 @@ namespace EMRG.Console
                 var drugAbuse = fixture.Create<bool>();
                 var smoker = fixture.Create<bool>();
 
-                var demographic = fixture.Create<PatientDemographics>();
+                var demographic = PatientDemographicBuilder.Instance.GetPatientDemographic(randomizer);
                 var clinicals = PatientClinicalBuilder.Instance.GetPatientClinicals(fixture, randomizer, demographic, alcoholAbuse, drugAbuse, smoker, maxNumberOfPatientClinicals);
                 var utilizations = PatientUtilizationBuilder.Instance.GetPatientUtilizations(fixture, randomizer, demographic, maxNumberOfPatientUtilizations);
                 var diagnoses = PatientDiagnosisBuilder.Instance.GetPatientDiagnoses(fixture, randomizer, demographic, maxNumberOfPatientDiagnoses);
