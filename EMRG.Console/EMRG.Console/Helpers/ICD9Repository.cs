@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
-namespace EMRG.Console.AutoFixture
+namespace EMRG.Console.Helpers
 {
     public class ICD9Repository
     {

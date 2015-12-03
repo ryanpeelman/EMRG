@@ -5,18 +5,17 @@ using Ploeh.AutoFixture;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using EMRG.Console.Builders;
+using EMRG.Console.Helpers;
 
 namespace EMRG.Console
 {
     class Program
     {
         private static readonly Random Randomizer = new Random((int)DateTime.Now.Ticks);
-        private static List<ICD9Entry> _icd9Entries; 
 
         static void Main(string[] args)
         {
-            _icd9Entries = ICD9Repository.Instance.GetEntries().ToList();
-
             var allClaimsTherapies = new List<ClaimsTherapy>();
             var allClaimsUtilizations = new List<ClaimsUtilization>();
             var allPatientAllergies = new List<PatientAllergy>();
@@ -44,7 +43,7 @@ namespace EMRG.Console
             for (int i = 0; i < numberOfPatients; i++)
             {
                 var demographic = fixture.Create<PatientDemographics>();
-
+                
                 var alcoholAbuse = fixture.Create<bool>();
                 var drugAbuse = fixture.Create<bool>();
                 var smoker = fixture.Create<bool>();
@@ -60,12 +59,7 @@ namespace EMRG.Console
                 fixture.Customize<PatientUtilization>(pu => pu.With(x => x.PatientId, demographic.PatientId));
                 var utilizations = fixture.CreateMany<PatientUtilization>(Randomizer.Next(0, maxNumberOfPatientUtilizations + 1)).OrderBy(x => x.ActivityDate);
 
-                fixture.Customize<PatientDiagnosis>(pd => pd.With(x => x.PatientId, demographic.PatientId)
-                                                            .Without(x => x.DiagnosisDescription)
-                                                            .Without(x => x.ICD9)
-                                                            .Without(x => x.ICD10));
-                var diagnoses = fixture.CreateMany<PatientDiagnosis>(Randomizer.Next(0, maxNumberOfPatientDiagnoses + 1)).OrderBy(x => x.DiagnosisDate);
-                diagnoses.ToList().ForEach(RedecoratePatientDiagnosis);
+                var diagnoses = DiagnosisBuilder.Instance.GetPatientDiagnoses(fixture, Randomizer, demographic, maxNumberOfPatientDiagnoses);
 
                 fixture.Customize<PatientLab>(pl => pl.With(x => x.PatientId, demographic.PatientId));
                 var labs = fixture.CreateMany<PatientLab>(Randomizer.Next(0, maxNumberOfPatientLabs + 1)).OrderBy(x => x.LabDate);
@@ -158,14 +152,6 @@ namespace EMRG.Console
             clinical.BMI = Math.Round(clinical.Weight/Math.Pow(AVERAGE_HEIGHT_IN_METERS, 2), 2);
         }
 
-        private static void RedecoratePatientDiagnosis(PatientDiagnosis diagnosis)
-        {
-            var index = Randomizer.Next(0, _icd9Entries.Count);
-            var entry = _icd9Entries.ElementAt(index);
-            diagnosis.ICD9 = entry.ICD9Code;
-            diagnosis.DiagnosisDescription = entry.DisplayName;
-        }
-
         private static void RedecoratePatientLab(PatientLab lab)
         {
             var preferredValues = new Dictionary<string, Func<string>>()
@@ -175,7 +161,7 @@ namespace EMRG.Console
             };
 
             var percentageOfPreferredValues = 40;
-            var shouldUsePreferredValue = Randomizer.Next(0, 101) <= percentageOfPreferredValues;
+            var shouldUsePreferredValue = Randomizer.NextPercent() <= percentageOfPreferredValues;
             if (shouldUsePreferredValue)
             {
                 var index = Randomizer.Next(0, preferredValues.Count);

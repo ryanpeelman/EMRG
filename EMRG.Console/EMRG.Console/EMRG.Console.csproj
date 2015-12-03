@@ -48,11 +48,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AutoFixture\CPTGenerator.cs" />
-    <Compile Include="AutoFixture\ICD9Entry.cs" />
-    <Compile Include="AutoFixture\ICD9Repository.cs" />
+    <Compile Include="Builders\DiagnosisBuilder.cs" />
+    <Compile Include="Helpers\ICD9Entry.cs" />
+    <Compile Include="Helpers\ICD9Repository.cs" />
     <Compile Include="AutoFixture\NDCGenerator.cs" />
     <Compile Include="AutoFixture\PatientSpecimenBuilder.cs" />
     <Compile Include="AutoFixture\ConstrainedValueGenerator.cs" />
+    <Compile Include="Helpers\RandomExtensions.cs" />
     <Compile Include="AutoFixture\WeightGenerator.cs" />
     <Compile Include="CSV\CsvWriter.cs" />
     <Compile Include="Enumerations\Allergy.cs" />

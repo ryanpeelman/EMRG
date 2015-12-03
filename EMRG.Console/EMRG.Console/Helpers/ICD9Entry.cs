@@ -1,4 +1,4 @@
-﻿namespace EMRG.Console.AutoFixture
+﻿namespace EMRG.Console.Helpers
 {
     public class ICD9Entry
     {
