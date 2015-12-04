@@ -59,7 +59,7 @@
     <Compile Include="Helpers\NDCGenerator.cs" />
     <Compile Include="AutoFixture\PatientSpecimenBuilder.cs" />
     <Compile Include="Helpers\RandomExtensions.cs" />
-    <Compile Include="Helpers\WeightGenerator.cs" />
+    <Compile Include="Helpers\BodyMetricGenerator.cs" />
     <Compile Include="CSV\CsvWriter.cs" />
     <Compile Include="Enumerations\Allergy.cs" />
     <Compile Include="Enumerations\Specialty.cs" />

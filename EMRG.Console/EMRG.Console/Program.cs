@@ -1,6 +1,7 @@
 ﻿using EMRG.Console.AutoFixture;
 using EMRG.Console.Builders;
 using EMRG.Console.CSV;
+using EMRG.Console.Helpers;
 using EMRG.Console.Models;
 using Ploeh.AutoFixture;
 using System;
@@ -44,8 +45,11 @@ namespace EMRG.Console
                 var drugAbuse = fixture.Create<bool>();
                 var smoker = fixture.Create<bool>();
 
+                var chanceOfObesity = 15;
+                var obese = randomizer.NextPercent() < chanceOfObesity;
+
                 var demographic = PatientDemographicBuilder.Instance.GetPatientDemographic(randomizer);
-                var clinicals = PatientClinicalBuilder.Instance.GetPatientClinicals(fixture, randomizer, demographic, alcoholAbuse, drugAbuse, smoker, maxNumberOfPatientClinicals);
+                var clinicals = PatientClinicalBuilder.Instance.GetPatientClinicals(fixture, randomizer, demographic, alcoholAbuse, drugAbuse, smoker, obese, maxNumberOfPatientClinicals);
                 var utilizations = PatientUtilizationBuilder.Instance.GetPatientUtilizations(fixture, randomizer, demographic, maxNumberOfPatientUtilizations);
                 var diagnoses = PatientDiagnosisBuilder.Instance.GetPatientDiagnoses(fixture, randomizer, demographic, maxNumberOfPatientDiagnoses);
                 var labs = PatientLabBuilder.Instance.GetPatientLabs(fixture, randomizer, demographic, maxNumberOfPatientLabs);
